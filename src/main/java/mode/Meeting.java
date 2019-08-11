@@ -4,8 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @NoArgsConstructor
 @ToString
@@ -16,6 +20,7 @@ public class Meeting {
 
   private LocalDateTime startTime;
 
+  private TimeSlot timeSlot;
 
   public void addAttendance(Person person) {
     attendances.add(
@@ -32,19 +37,26 @@ public class Meeting {
         .orElseThrow(() -> new IllegalStateException("Meeting time is not setup yet"));
   }
 
+  public TimeSlot getTimeSlot() {
+    return Optional.ofNullable(timeSlot)
+            .orElseThrow(() -> new IllegalStateException("TimeSlot is not setup yet"));
+  }
+
   public LocalDateTime getEndTime() {
     return getStartTime().plusHours(1L);
   }
 
-  public void setStartTime(LocalDateTime startTime) {
-    this.startTime =
-        Optional.ofNullable(startTime)
-            .orElseThrow(() -> new IllegalArgumentException("Start time is null"));
+  public void setStartTime(LocalDate date, TimeSlot slot) {
+
+    Optional.ofNullable(date).orElseThrow(() -> new IllegalArgumentException("Start time is null"));
+
+    startTime =
+        LocalDateTime.of(
+            date.getYear(), date.getMonth(), date.getDayOfMonth(), slot.getHourMark(), 0, 0);
 
     if (startTime.isBefore(LocalDateTime.now()))
       throw new IllegalArgumentException("Meeting cannot be booked for the past.");
 
-    this.startTime =
-        LocalDateTime.of(startTime.getYear(), startTime.getMonth(), startTime.getDayOfMonth(),startTime.getHour(), 0, 0);
+    this.timeSlot = slot;
   }
 }

@@ -1,6 +1,6 @@
 package mode;
 
-public enum TimeSlots {
+public enum TimeSlot {
   CLOCK_O8(8),
   CLOCK_O9(9),
   CLOCK_10(10),
@@ -14,7 +14,7 @@ public enum TimeSlots {
 
   private int hourMark;
 
-  TimeSlots(int mark) {
+  TimeSlot(int mark) {
     this.hourMark = mark;
   }
 

@@ -3,7 +3,9 @@ package mode;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +17,8 @@ public class MeetingTest {
   private Person person2;
   private Person person3;
 
-  private LocalDateTime startTime;
+  private LocalDate date;
+  private LocalTime time;
 
   @Before
   public void setUp() throws Exception {
@@ -23,14 +26,15 @@ public class MeetingTest {
     person2 = new Person("Mia", "mia@google.com");
     person3 = new Person("Alex", "Alex@google.com");
 
-    startTime = LocalDateTime.of(2019, Month.AUGUST, 12, 12, 0, 0);
+    date = LocalDate.of(2019, Month.DECEMBER, 12);
+    time = LocalTime.of(TimeSlot.CLOCK_14.getHourMark(),0,0);
   }
 
   @Test
   public void whenAddThreePersonsIntoMeeting_GetAttendanceSizeThree() {
     Meeting meeting = new Meeting();
 
-    meeting.setStartTime(startTime);
+    meeting.setStartTime(date,TimeSlot.CLOCK_11);
     meeting.addAttendance(person1);
     meeting.addAttendance(person2);
     meeting.addAttendance(person3);
@@ -64,19 +68,12 @@ public class MeetingTest {
   }
 
   @Test
-  public void whenGetStartTime_ItEscapeReference() {
-    Meeting meeting = new Meeting();
-    meeting.setStartTime(startTime);
-
-    assertTrue(startTime != meeting.getStartTime());
-  }
-
-  @Test
   public void whenGetStartTime_ItEqualsTimeSet() {
     Meeting meeting = new Meeting();
-    meeting.setStartTime(startTime);
+    meeting.setStartTime(date, TimeSlot.CLOCK_10);
 
-    assertEquals(startTime, meeting.getStartTime());
+    LocalTime time = LocalTime.of(TimeSlot.CLOCK_10.getHourMark(), 0, 0);
+    assertEquals(LocalDateTime.of(date, time), meeting.getStartTime());
   }
 
   @Test
@@ -85,8 +82,10 @@ public class MeetingTest {
     meeting.addAttendance(person1);
     meeting.addAttendance(person3);
 
-    meeting.setStartTime(startTime);
-    assertTrue(meeting.getEndTime().isAfter(startTime));
+    meeting.setStartTime(date, TimeSlot.CLOCK_11);
+    LocalTime time = LocalTime.of(TimeSlot.CLOCK_11.getHourMark(), 0, 0);
+
+    assertTrue(meeting.getEndTime().isAfter(LocalDateTime.of(date,time)));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -95,7 +94,7 @@ public class MeetingTest {
     meeting.addAttendance(person1);
     meeting.addAttendance(person3);
 
-    LocalDateTime past = LocalDateTime.of(2018, Month.FEBRUARY, 10, 10, 12, 15);
-    meeting.setStartTime(past);
+    LocalDate pastDate = LocalDate.of(2018, Month.FEBRUARY, 10);
+    meeting.setStartTime(pastDate, TimeSlot.CLOCK_16);
   }
 }
