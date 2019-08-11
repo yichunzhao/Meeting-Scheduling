@@ -7,6 +7,7 @@ import lombok.ToString;
 import java.util.Optional;
 
 import static util.Helper.isValidEmail;
+import static util.Helper.isValidName;
 
 @EqualsAndHashCode
 @ToString
@@ -17,13 +18,13 @@ public final class Person {
 
   public Person(String name, String email) {
 
-    this.name =
-        Optional.ofNullable(name).orElseThrow(() -> new IllegalArgumentException("name is null"));
+    Optional.ofNullable(name).orElseThrow(() -> new IllegalArgumentException("Name is null."));
+    Optional.ofNullable(email).orElseThrow(() -> new IllegalArgumentException("Email is null."));
 
-    Optional.ofNullable(email).orElseThrow(() -> new IllegalArgumentException("email is null"));
-
+    if (!isValidName(name)) throw new IllegalArgumentException("Name is not valid.");
     if (!isValidEmail(email)) throw new IllegalArgumentException("Email address is not valid.");
 
+    this.name = name;
     this.email = email;
   }
 }
