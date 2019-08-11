@@ -1,4 +1,4 @@
-package mode;
+package model;
 
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package mode;
+package model;
 
 import org.junit.Test;
 

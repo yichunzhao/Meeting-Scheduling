@@ -1,8 +1,8 @@
 package core;
 
-import mode.Meeting;
-import mode.Person;
-import mode.TimeSlot;
+import model.Meeting;
+import model.Person;
+import model.TimeSlot;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

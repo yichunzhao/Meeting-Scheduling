@@ -1,4 +1,4 @@
-package mode;
+package model;
 
 public enum TimeSlot {
   CLOCK_O8(8),
