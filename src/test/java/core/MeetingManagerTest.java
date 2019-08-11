@@ -32,8 +32,8 @@ public class MeetingManagerTest {
   }
 
   @Test
-  public void findMeetingsByPerson() {
-    MeetingManager meetingManager = new MeetingManager();
+  public void givenPerson_findUpComingMeetings() {
+    UsingMeetingManager meetingManager = new MeetingManager();
 
     Meeting meeting1 = new Meeting();
 
@@ -57,7 +57,7 @@ public class MeetingManagerTest {
 
   @Test
   public void GivePersonAndDate_SuggestAvailableSlotsInDay() {
-    MeetingManager meetingManager = new MeetingManager();
+    UsingMeetingManager meetingManager = new MeetingManager();
 
     Meeting meeting1 = new Meeting();
 

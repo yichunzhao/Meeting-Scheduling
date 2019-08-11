@@ -11,10 +11,11 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-public class MeetingManager {
+public class MeetingManager implements UsingMeetingManager {
 
   private Set<Meeting> allMeetings = new HashSet<>();
 
+  @Override
   public void addMeeting(Meeting meeting) {
     allMeetings.add(meeting);
   }
@@ -25,6 +26,7 @@ public class MeetingManager {
    * @param person
    * @return List<Meeting></Meeting>
    */
+  @Override
   public List<Meeting> findMeetingsByPerson(Person person) {
     Optional.ofNullable(person).orElseThrow(() -> new IllegalArgumentException("Person is null "));
 
@@ -40,6 +42,7 @@ public class MeetingManager {
    * For a specific date(current or upcoming) Given a persons, and a date, suggesting available
    * slots for this person.
    */
+  @Override
   public Set<TimeSlot> suggestTimeSlots(Person person, LocalDate upcomingDate) {
     Set<TimeSlot> timeSlots = new HashSet<>();
 
