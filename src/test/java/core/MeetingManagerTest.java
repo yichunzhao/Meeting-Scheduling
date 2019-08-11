@@ -57,7 +57,32 @@ public class MeetingManagerTest {
 
   @Test
   public void GivePersonAndDate_SuggestAvailableSlotsInDay() {
+    MeetingManager meetingManager = new MeetingManager();
 
+    Meeting meeting1 = new Meeting();
+
+    meeting1.setStartTime(date, TimeSlot.CLOCK_14);
+    meeting1.addAttendance(person1);
+    meeting1.addAttendance(person2);
+
+    meetingManager.addMeeting(meeting1);
+
+    Meeting meeting2 = new Meeting();
+
+    meeting2.setStartTime(date, TimeSlot.CLOCK_15);
+    meeting2.addAttendance(person1);
+    meeting2.addAttendance(person3);
+
+    meetingManager.addMeeting(meeting2);
+
+    long actual = meetingManager.suggestTimeSlots(person1, date).size();
+
+    long expected =
+        Arrays.stream(TimeSlot.values())
+            .filter(slot -> !Arrays.asList(TimeSlot.CLOCK_14, TimeSlot.CLOCK_15).contains(slot))
+            .count();
+
+    assertEquals(expected, actual);
   }
 
   @Test
