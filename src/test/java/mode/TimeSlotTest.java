@@ -55,5 +55,4 @@ public class TimeSlotTest {
   public void getHourMarkClock17_MarkIs17() {
     assertEquals(17, TimeSlot.CLOCK_17.getHourMark());
   }
-
 }

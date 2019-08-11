@@ -4,7 +4,10 @@ import mode.Meeting;
 import mode.Person;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,17 +36,16 @@ public class MeetingManager {
         .collect(toList());
   }
 
-    /**
-     *  Given a list of persons, and suggest
-     * @param persons
-     * @return
-     */
-  public List<LocalDateTime> suggestTimeSlots(Set<Person> persons){
+  /**
+   * Given a list of persons, and suggest
+   *
+   * @param persons
+   * @return
+   */
+  public List<LocalDateTime> suggestTimeSlots(Set<Person> persons) {
 
-      List<LocalDateTime> slots =null;
+    List<LocalDateTime> slots = null;
 
-
-      return slots;
-
+    return slots;
   }
 }

@@ -39,7 +39,7 @@ public class Meeting {
 
   public TimeSlot getTimeSlot() {
     return Optional.ofNullable(timeSlot)
-            .orElseThrow(() -> new IllegalStateException("TimeSlot is not setup yet"));
+        .orElseThrow(() -> new IllegalStateException("TimeSlot is not setup yet"));
   }
 
   public LocalDateTime getEndTime() {

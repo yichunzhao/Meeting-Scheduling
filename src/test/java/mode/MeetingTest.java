@@ -27,14 +27,14 @@ public class MeetingTest {
     person3 = new Person("Alex", "Alex@google.com");
 
     date = LocalDate.of(2019, Month.DECEMBER, 12);
-    time = LocalTime.of(TimeSlot.CLOCK_14.getHourMark(),0,0);
+    time = LocalTime.of(TimeSlot.CLOCK_14.getHourMark(), 0, 0);
   }
 
   @Test
   public void whenAddThreePersonsIntoMeeting_GetAttendanceSizeThree() {
     Meeting meeting = new Meeting();
 
-    meeting.setStartTime(date,TimeSlot.CLOCK_11);
+    meeting.setStartTime(date, TimeSlot.CLOCK_11);
     meeting.addAttendance(person1);
     meeting.addAttendance(person2);
     meeting.addAttendance(person3);
@@ -85,7 +85,7 @@ public class MeetingTest {
     meeting.setStartTime(date, TimeSlot.CLOCK_11);
     LocalTime time = LocalTime.of(TimeSlot.CLOCK_11.getHourMark(), 0, 0);
 
-    assertTrue(meeting.getEndTime().isAfter(LocalDateTime.of(date,time)));
+    assertTrue(meeting.getEndTime().isAfter(LocalDateTime.of(date, time)));
   }
 
   @Test(expected = IllegalArgumentException.class)
