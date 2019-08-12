@@ -6,9 +6,11 @@ import model.TimeSlot;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 public class MeetingManager implements UsingMeetingManager {
@@ -27,7 +29,7 @@ public class MeetingManager implements UsingMeetingManager {
    * @return List<Meeting></Meeting>
    */
   @Override
-  public List<Meeting> findMeetingsByPerson(Person person) {
+  public Set<Meeting> findMeetingsByPerson(Person person) {
     Optional.ofNullable(person).orElseThrow(() -> new IllegalArgumentException("Person is null "));
 
     return allMeetings.stream()
@@ -35,7 +37,7 @@ public class MeetingManager implements UsingMeetingManager {
             meeting ->
                 meeting.getAttendances().contains(person)
                     && meeting.getStartTime().isAfter(LocalDateTime.now()))
-        .collect(toList());
+        .collect(toSet());
   }
 
   /**
@@ -44,7 +46,6 @@ public class MeetingManager implements UsingMeetingManager {
    */
   @Override
   public Set<TimeSlot> suggestTimeSlots(Person person, LocalDate upcomingDate) {
-    Set<TimeSlot> timeSlots = new HashSet<>();
 
     if (upcomingDate.isBefore(LocalDate.now()))
       throw new IllegalArgumentException("please input current date or future");
@@ -56,7 +57,9 @@ public class MeetingManager implements UsingMeetingManager {
     return findNotOccupiedTimeSlotsInDay(occupiedSlots);
   }
 
-  /** for this person on this date, find out his time slots used. */
+  /**
+   * for this person on this date, find out his time slots used.
+   * */
   public Set<TimeSlot> findPersonOccupiedTimeSlotsInDay(LocalDate date, Person person) {
     // on this date, person has following slots occupied.
     return allMeetings.stream()
