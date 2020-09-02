@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public final class Person {
-    private final String name;
+    private final Name name;
     private final Email email;
 }
 

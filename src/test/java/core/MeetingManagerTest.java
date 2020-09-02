@@ -3,6 +3,7 @@ package core;
 import model.Email;
 import model.Meeting;
 import model.MeetingDateTime;
+import model.Name;
 import model.Person;
 import model.TimeSlot;
 import org.junit.Before;
@@ -25,9 +26,9 @@ public class MeetingManagerTest {
 
     @Before
     public void setup() {
-        person1 = new Person("Mike", new Email("mike@google.com"));
-        person2 = new Person("Mia", new Email("mia@google.com"));
-        person3 = new Person("Alex", new Email("Alex@google.com"));
+        person1 = new Person(Name.of("Mike"), Email.of("mike@google.com"));
+        person2 = new Person(Name.of("Mia"), Email.of("mia@google.com"));
+        person3 = new Person(Name.of("Alex"), Email.of("Alex@google.com"));
 
         date = LocalDate.now().plusDays(1L);
     }
