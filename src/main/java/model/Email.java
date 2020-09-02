@@ -1,12 +1,17 @@
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
+
+@Getter
+@EqualsAndHashCode
 public class Email {
     private String emailAddress;
+
+    private Email(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
     public static Email of(String emailAddress) {
         return new Email(emailAddress);
