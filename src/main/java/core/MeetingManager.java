@@ -1,6 +1,5 @@
 package core;
 
-import lombok.extern.slf4j.Slf4j;
 import model.Email;
 import model.Meeting;
 import model.MeetingDateTime;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
-public class MeetingManager implements UsingMeetingManager {
+public class MeetingManager {
     //existing emails(contains O(1))
     private Set<Email> emailSet = new HashSet<>();
 
@@ -57,7 +56,6 @@ public class MeetingManager implements UsingMeetingManager {
     /**
      * Find upcoming meetings for a person.
      */
-    @Override
     public Map<MeetingDateTime, Meeting> findUpcomingMeetingsByPerson(Person person) {
         Optional.ofNullable(person).orElseThrow(() -> new IllegalArgumentException("Person is null "));
 
@@ -74,7 +72,6 @@ public class MeetingManager implements UsingMeetingManager {
      * For a specific date(current or upcoming) Given a persons, and a date, suggesting available
      * slots for this person.
      */
-    @Override
     public Set<TimeSlot> suggestTimeSlots(Person person, LocalDate upcomingDate) {
 
         if (upcomingDate.isBefore(LocalDate.now()))
