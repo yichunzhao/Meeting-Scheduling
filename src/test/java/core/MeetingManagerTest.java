@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class MeetingManagerTest {
     private Person person1;
@@ -75,16 +76,22 @@ public class MeetingManagerTest {
     }
 
     @Test
+    void assumptionsAboutMeetings() {
+        //two upcoming meetings and one meeting in the past.
+        assumeTrue(meeting1.getMeetingDateTime().getMeetingDate().isAfter(LocalDate.now()));
+        assumeTrue(meeting2.getMeetingDateTime().getMeetingDate().isAfter(LocalDate.now()));
+        assumeTrue(meeting3.getMeetingDateTime().getMeetingDate().isBefore(LocalDate.now()));
+    }
+
+    @Test
     void givenPerson_findUpComingMeetings() {
+
         MeetingManager meetingManager = MeetingManager.instance();
 
         meetingManager.createMeetingPerson(meeting1, person1);
 
-        meetingManager.createMeetingPerson(meeting2, person1);
-        meetingManager.createMeetingPerson(meeting2, person3);
-
-        meetingManager.createMeetingPerson(meeting3, person1);
-        meetingManager.createMeetingPerson(meeting3, person3);
+        meetingManager.createMeetingPersons(meeting2, person1, person3);
+        meetingManager.createMeetingPersons(meeting3, person1, person3);
 
         meetingManager.findUpcomingMeetingsByPerson(person1).size();
 
@@ -92,14 +99,17 @@ public class MeetingManagerTest {
     }
 
     @Test
+    void givenPersons_findUpComingMeetings() {
+        MeetingManager meetingManager = MeetingManager.instance();
+    }
+
+    @Test
     void GivePersonAndDate_SuggestAvailableSlotsInDay() {
         MeetingManager meetingManager = MeetingManager.instance();
 
-        meetingManager.createMeetingPerson(meeting1, person1);
-        meetingManager.createMeetingPerson(meeting1, person2);
+        meetingManager.createMeetingPersons(meeting1, Stream.of(person1, person2).collect(toSet()));
 
-        meetingManager.createMeetingPerson(meeting2, person1);
-        meetingManager.createMeetingPerson(meeting2, person3);
+        meetingManager.createMeetingPersons(meeting2, Stream.of(person1, person3).collect(toSet()));
 
         int numOfSlots = TimeSlot.values().length;
 
@@ -159,5 +169,15 @@ public class MeetingManagerTest {
         assertEquals(exception.getMessage(), "Person is not found: " + person.getName());
     }
 
+    @Test
+    @DisplayName("when creating a person having the existing email")
+    void findCreatePersonWithExistingEmail_throwException() {
+        MeetingManager meetingManager = MeetingManager.instance();
+
+        meetingManager.createMeetingPerson(meeting1, person1);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> meetingManager.createMeetingPerson(meeting1, new Person(Name.of("ynz"), person1.getEmail())));
+    }
 
 }

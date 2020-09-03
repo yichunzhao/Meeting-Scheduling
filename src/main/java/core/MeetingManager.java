@@ -28,7 +28,6 @@ public class MeetingManager {
     //store person, meetingDateTime, and meeting in one map.
     private Map<Person, Map<MeetingDateTime, Meeting>> personDateTimeMeetingMap = new HashMap<>();
 
-
     private void createPerson(Person person) {
         if (emailSet.contains(person.getEmail()))
             throw new IllegalArgumentException("The email address is already existed: " + person.getEmail());
@@ -43,6 +42,9 @@ public class MeetingManager {
         return found;
     }
 
+    /**
+     * Involving one person in a meeting.
+     */
     public void createMeetingPerson(Meeting meeting, Person person) {
         if (!personDateTimeMeetingMap.keySet().contains(person)) createPerson(person);
 
@@ -54,6 +56,16 @@ public class MeetingManager {
         personDateTimeMeetingMap.get(person).put(dateTime, meeting);
     }
 
+    /**
+     * Involving persons in a meeting.
+     */
+    public void createMeetingPersons(Meeting meeting, Set<Person> persons) {
+        persons.forEach(person -> createMeetingPerson(meeting, person));
+    }
+
+    public void createMeetingPersons(Meeting meeting, Person... persons) {
+        Arrays.stream(persons).forEach(person -> createMeetingPerson(meeting, person));
+    }
 
     /**
      * Find upcoming meetings for a person.
