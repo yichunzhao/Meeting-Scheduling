@@ -6,16 +6,22 @@ import model.MeetingDateTime;
 import model.Name;
 import model.Person;
 import model.TimeSlot;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MeetingManagerTest {
     private Person person1;
@@ -28,7 +34,7 @@ public class MeetingManagerTest {
 
     private LocalDate date;
 
-    @Before
+    @BeforeEach
     public void setup() {
         date = LocalDate.now();
 
@@ -46,9 +52,31 @@ public class MeetingManagerTest {
         meeting3 = new Meeting("meeting_3", new MeetingDateTime(date.minusDays(1L), TimeSlot.CLOCK_15));
     }
 
+    @AfterEach
+    void done() {
+        System.out.println("++++++++++++++++++++++++++ unit test done ++++++++++++++++++++++++++++++++++");
+        person1 = null;
+        person2 = null;
+        person3 = null;
+        meeting1 = null;
+        meeting2 = null;
+        meeting3 = null;
+        date = null;
+    }
+
+    @BeforeAll
+    static void initForAllTests() {
+        System.out.println("......................... Init all tests ....................................");
+    }
+
+    @AfterAll
+    static void allTestDone() {
+        System.out.println("........................ all unit test done .................................");
+    }
+
     @Test
-    public void givenPerson_findUpComingMeetings() {
-        MeetingManager meetingManager = new MeetingManager();
+    void givenPerson_findUpComingMeetings() {
+        MeetingManager meetingManager = MeetingManager.instance();
 
         meetingManager.createMeetingPerson(meeting1, person1);
 
@@ -64,8 +92,8 @@ public class MeetingManagerTest {
     }
 
     @Test
-    public void GivePersonAndDate_SuggestAvailableSlotsInDay() {
-        MeetingManager meetingManager = new MeetingManager();
+    void GivePersonAndDate_SuggestAvailableSlotsInDay() {
+        MeetingManager meetingManager = MeetingManager.instance();
 
         meetingManager.createMeetingPerson(meeting1, person1);
         meetingManager.createMeetingPerson(meeting1, person2);
@@ -89,8 +117,8 @@ public class MeetingManagerTest {
     }
 
     @Test
-    public void givenListSlotsUsed_FindUnUsedSlotsInDay() {
-        MeetingManager meetingManager = new MeetingManager();
+    void givenListSlotsUsed_FindUnUsedSlotsInDay() {
+        MeetingManager meetingManager = MeetingManager.instance();
 
         Set<TimeSlot> occupied = Stream.of(TimeSlot.CLOCK_10, TimeSlot.CLOCK_16).collect(toSet());
         Set<TimeSlot> actual = meetingManager.findNotOccupiedTimeSlotsInDay(occupied);
@@ -102,8 +130,8 @@ public class MeetingManagerTest {
     }
 
     @Test
-    public void givenPersonAndDate_FindOutOccupiedSlotsInDay() {
-        MeetingManager meetingManager = new MeetingManager();
+    void givenPersonAndDate_FindOutOccupiedSlotsInDay() {
+        MeetingManager meetingManager = MeetingManager.instance();
 
         meetingManager.createMeetingPerson(meeting1, person1);
         meetingManager.createMeetingPerson(meeting1, person2);
@@ -119,4 +147,17 @@ public class MeetingManagerTest {
         assertEquals(0, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(2L), person2).size());
         assertEquals(0, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(1L), person3).size());
     }
+
+    @Test
+    @DisplayName("when find a non-existed person, it throws an NoSuchElementException.")
+    void findPersonWhoIsNotExisted_throwException() {
+        Person person = new Person(Name.of("ynz"), Email.of("ynz@mail.com"));
+
+        Throwable exception = assertThrows(NoSuchElementException.class,
+                () -> MeetingManager.instance().findPersonMeetings(person));
+
+        assertEquals(exception.getMessage(), "Person is not found: " + person.getName());
+    }
+
+
 }
