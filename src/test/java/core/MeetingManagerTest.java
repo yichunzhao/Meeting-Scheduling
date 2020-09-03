@@ -22,31 +22,41 @@ public class MeetingManagerTest {
     private Person person2;
     private Person person3;
 
+    private Meeting meeting1;
+    private Meeting meeting2;
+    private Meeting meeting3;
+
     private LocalDate date;
 
     @Before
     public void setup() {
+        date = LocalDate.now();
+
         person1 = new Person(Name.of("Mike"), Email.of("mike@google.com"));
         person2 = new Person(Name.of("Mia"), Email.of("mia@google.com"));
         person3 = new Person(Name.of("Alex"), Email.of("Alex@google.com"));
 
-        date = LocalDate.now().plusDays(1L);
+        //meeting in one day
+        meeting1 = new Meeting("meeting_1", new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14));
+
+        //meeting in two days
+        meeting2 = new Meeting("meeting_2", new MeetingDateTime(date.plusDays(2L), TimeSlot.CLOCK_15));
+
+        //meeting in one day ago
+        meeting3 = new Meeting("meeting_3", new MeetingDateTime(date.minusDays(1L), TimeSlot.CLOCK_15));
     }
 
     @Test
     public void givenPerson_findUpComingMeetings() {
         MeetingManager meetingManager = new MeetingManager();
 
-        Meeting meeting1 = new Meeting("meeting_1", new MeetingDateTime(date, TimeSlot.CLOCK_14));
-
-
         meetingManager.createMeetingPerson(meeting1, person1);
-
-        Meeting meeting2 = new Meeting("meeting_2", new MeetingDateTime(date, TimeSlot.CLOCK_15));
-
 
         meetingManager.createMeetingPerson(meeting2, person1);
         meetingManager.createMeetingPerson(meeting2, person3);
+
+        meetingManager.createMeetingPerson(meeting3, person1);
+        meetingManager.createMeetingPerson(meeting3, person3);
 
         meetingManager.findUpcomingMeetingsByPerson(person1).size();
 
@@ -57,29 +67,25 @@ public class MeetingManagerTest {
     public void GivePersonAndDate_SuggestAvailableSlotsInDay() {
         MeetingManager meetingManager = new MeetingManager();
 
-        Meeting meeting1 = new Meeting();
-
-        meeting1.setMeetingDateTime(new MeetingDateTime(date, TimeSlot.CLOCK_14));
-
         meetingManager.createMeetingPerson(meeting1, person1);
         meetingManager.createMeetingPerson(meeting1, person2);
-
-        Meeting meeting2 = new Meeting();
-
-        meeting2.setMeetingDateTime(new MeetingDateTime(date, TimeSlot.CLOCK_15));
 
         meetingManager.createMeetingPerson(meeting2, person1);
         meetingManager.createMeetingPerson(meeting2, person3);
 
+        int numOfSlots = TimeSlot.values().length;
 
-        long actual = meetingManager.suggestTimeSlots(person1, date).size();
+        assertEquals(numOfSlots, meetingManager.suggestTimeSlots(person1, date).size());
+        assertEquals(numOfSlots - 1, meetingManager.suggestTimeSlots(person1, date.plusDays(1L)).size());
+        assertEquals(numOfSlots - 1, meetingManager.suggestTimeSlots(person1, date.plusDays(2L)).size());
 
-        long expected =
-                Arrays.stream(TimeSlot.values())
-                        .filter(slot -> !Arrays.asList(TimeSlot.CLOCK_14, TimeSlot.CLOCK_15).contains(slot))
-                        .count();
+        assertEquals(numOfSlots, meetingManager.suggestTimeSlots(person2, date).size());
+        assertEquals(numOfSlots - 1, meetingManager.suggestTimeSlots(person1, date.plusDays(1L)).size());
+        assertEquals(numOfSlots, meetingManager.suggestTimeSlots(person2, date.plusDays(2L)).size());
 
-        assertEquals(expected, actual);
+        assertEquals(numOfSlots, meetingManager.suggestTimeSlots(person3, date).size());
+        assertEquals(numOfSlots, meetingManager.suggestTimeSlots(person3, date.plusDays(1L)).size());
+        assertEquals(numOfSlots - 1, meetingManager.suggestTimeSlots(person3, date.plusDays(2L)).size());
     }
 
     @Test
@@ -99,22 +105,18 @@ public class MeetingManagerTest {
     public void givenPersonAndDate_FindOutOccupiedSlotsInDay() {
         MeetingManager meetingManager = new MeetingManager();
 
-        Meeting meeting1 = new Meeting();
-
-        meeting1.setMeetingDateTime(new MeetingDateTime(date, TimeSlot.CLOCK_14));
-
         meetingManager.createMeetingPerson(meeting1, person1);
         meetingManager.createMeetingPerson(meeting1, person2);
-
-        Meeting meeting2 = new Meeting();
-
-        meeting2.setMeetingDateTime(new MeetingDateTime(date, TimeSlot.CLOCK_15));
 
         meetingManager.createMeetingPerson(meeting2, person1);
         meetingManager.createMeetingPerson(meeting2, person3);
 
-        Set<TimeSlot> slotsOccupied = meetingManager.findPersonOccupiedTimeSlotsInDay(date, person1);
+        assertEquals(1, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(1L), person1).size());
+        assertEquals(1, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(1L), person2).size());
+        assertEquals(1, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(2L), person1).size());
+        assertEquals(1, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(2L), person3).size());
 
-        assertEquals(2, slotsOccupied.size());
+        assertEquals(0, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(2L), person2).size());
+        assertEquals(0, meetingManager.findPersonOccupiedTimeSlotsInDay(date.plusDays(1L), person3).size());
     }
 }
