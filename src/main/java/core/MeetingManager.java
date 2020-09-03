@@ -1,5 +1,6 @@
 package core;
 
+import lombok.RequiredArgsConstructor;
 import model.Email;
 import model.Meeting;
 import model.MeetingDateTime;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
+@RequiredArgsConstructor(staticName = "instance")
 public class MeetingManager {
     //existing emails(contains O(1))
     private Set<Email> emailSet = new HashSet<>();
@@ -35,7 +37,7 @@ public class MeetingManager {
         personDateTimeMeetingMap.put(person, new HashMap<>());
     }
 
-    private Map<MeetingDateTime, Meeting> findPersonMeetings(Person person) {
+    public Map<MeetingDateTime, Meeting> findPersonMeetings(Person person) {
         Map<MeetingDateTime, Meeting> found = this.personDateTimeMeetingMap.get(person);
         if (found == null) throw new NoSuchElementException("Person is not found: " + person.getName());
         return found;
