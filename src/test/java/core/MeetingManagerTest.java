@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class MeetingManagerTest {
@@ -176,8 +179,38 @@ public class MeetingManagerTest {
 
         meetingManager.createMeetingPerson(meeting1, person1);
 
-        assertThrows(IllegalArgumentException.class,
+        Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> meetingManager.createMeetingPerson(meeting1, new Person(Name.of("ynz"), person1.getEmail())));
+
+        assertTrue(exception.getMessage().contains("The email address is already existed:"));
     }
+
+    @Test
+    void assignedTimeSlotConflicting_throwException() {
+        MeetingManager meetingManager = MeetingManager.instance();
+        meetingManager.createMeetingPersons(meeting1, person1, person2, person3);
+
+        Meeting meeting4 = new Meeting("another meeting", new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14));
+        Throwable throwable = assertThrows(IllegalStateException.class, () -> meetingManager.createMeetingPerson(meeting4, person1));
+
+        assertTrue(throwable.getMessage().contains("meeting slot is occupied"));
+    }
+
+    @Test
+    @Disabled
+    void sameDateAndTimeSlot_givesSameHashCode() {
+        MeetingDateTime meetingDateTime = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
+        MeetingDateTime meetingDateTime_ = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
+        assertTrue(meetingDateTime_.hashCode() == meetingDateTime.hashCode());
+    }
+
+    @Test
+    @Disabled
+    void sameDateDifferentTimeSlot_givesDifferentHashCode() {
+        MeetingDateTime meetingDateTime = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_15);
+        MeetingDateTime meetingDateTime_ = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
+        assertFalse(meetingDateTime_.hashCode() == meetingDateTime.hashCode());
+    }
+
 
 }

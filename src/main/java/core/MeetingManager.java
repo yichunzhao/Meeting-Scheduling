@@ -119,4 +119,6 @@ public class MeetingManager {
                 .filter(slot -> !occupied.contains(slot))
                 .collect(toSet());
     }
+
+
 }
