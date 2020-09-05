@@ -120,5 +120,11 @@ public class MeetingManager {
                 .collect(toSet());
     }
 
+    /**
+     * Suggest one or more available timeslots for meetings given a group of persons.
+     */
+    public Map<Person, Set<TimeSlot>> suggestPersonsTimeSlots(Set<Person> persons, LocalDate date) {
+        return persons.stream().collect(Collectors.toMap(person -> person, person -> suggestTimeSlots(person, date)));
+    }
 
 }

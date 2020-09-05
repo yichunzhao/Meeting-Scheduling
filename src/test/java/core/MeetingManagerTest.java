@@ -16,11 +16,13 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -210,6 +212,25 @@ public class MeetingManagerTest {
         MeetingDateTime meetingDateTime = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_15);
         MeetingDateTime meetingDateTime_ = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
         assertFalse(meetingDateTime_.hashCode() == meetingDateTime.hashCode());
+    }
+
+    @Test
+    void testSuggestPersonTimeSlots() {
+        MeetingManager meetingManager = MeetingManager.instance();
+        meetingManager.createMeetingPersons(meeting1, person1, person2);
+        meetingManager.createMeetingPersons(meeting2, person1, person3);
+        meetingManager.createMeetingPersons(meeting3, person1, person2, person3);
+
+        Set<Person> persons = Stream.of(person1, person2, person3).collect(toSet());
+        LocalDate date = meeting2.getMeetingDateTime().getMeetingDate();
+
+        Map<Person, Set<TimeSlot>> personsTimeSlots = meetingManager.suggestPersonsTimeSlots(persons, date);
+
+        assertAll("check all persons",
+                () -> assertEquals(TimeSlot.values().length - 1, personsTimeSlots.get(person1).size()),
+                () -> assertEquals(TimeSlot.values().length - 1, personsTimeSlots.get(person3).size()),
+                () -> assertEquals(TimeSlot.values().length, personsTimeSlots.get(person2).size())
+        );
     }
 
 
