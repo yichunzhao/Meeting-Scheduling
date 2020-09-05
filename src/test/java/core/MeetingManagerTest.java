@@ -25,6 +25,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -203,7 +204,7 @@ public class MeetingManagerTest {
     void sameDateAndTimeSlot_givesSameHashCode() {
         MeetingDateTime meetingDateTime = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
         MeetingDateTime meetingDateTime_ = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
-        assertTrue(meetingDateTime_.hashCode() == meetingDateTime.hashCode());
+        assertEquals(meetingDateTime.hashCode(), meetingDateTime_.hashCode());
     }
 
     @Test
@@ -211,7 +212,7 @@ public class MeetingManagerTest {
     void sameDateDifferentTimeSlot_givesDifferentHashCode() {
         MeetingDateTime meetingDateTime = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_15);
         MeetingDateTime meetingDateTime_ = new MeetingDateTime(date.plusDays(1L), TimeSlot.CLOCK_14);
-        assertFalse(meetingDateTime_.hashCode() == meetingDateTime.hashCode());
+        assertNotEquals(meetingDateTime.hashCode(), meetingDateTime_.hashCode());
     }
 
     @Test
